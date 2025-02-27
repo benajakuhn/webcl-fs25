@@ -6,18 +6,11 @@ export class TeamMemberController {
     constructor() {
         this.model = new TeamMemberList();
         this.view = new TeamMemberView();
-
-        this.view.bindAddTeamMember(this.addTeamMember.bind(this));
-        this.view.bindSaveTeamMember(this.saveTeamMember.bind(this));
-        this.view.bindResetForm(this.resetForm.bind(this));
-
-        this.model.teamMembers.onAdd(this.updateView.bind(this));
-        this.model.teamMembers.onDel(this.updateView.bind(this));
     }
 
     addTeamMember() {
-        this.view.resetForm();
-        this.view.teamMemberForm.classList.remove('unselected');
+        this.model.addTeamMember(new TeamMember('John', 'Doe', 'Developer', 'Yes', false, 100));
+        this.view.renderTable(this.model.teamMembers.list);
     }
 
     saveTeamMember() {
