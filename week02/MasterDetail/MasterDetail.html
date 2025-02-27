@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master-Detail View</title>
+
+</head>
+<body>
+    <div class="row">
+        <div class="col-xs-12 col-lg-8">
+            <button id="add-teammember" class="btn btn-default btn-sm button-add" title="add a row for a new team member"> + </button>
+            <table id="list" class="table table-bordered table-condensed">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Function</th>
+                    <th>Available</th>
+                    <th>Contractor</th>
+                    <th><div style="width: 4em">Workload&nbsp;%</div></th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody id="team-records"></tbody>
+            </table>
+        </div>
+        <div class="col-xs-6 col-lg-4">
+            <div id="teammember-form" class="detail-form unselected">
+                <table class="form">
+                    <tr>
+                        <td class="td-label">First Name</td>
+                        <td align="left"><input id="firstName" type="text" placeholder="e.g. John" maxlength="20"/></td>
+                    </tr>
+                    <tr>
+                        <td />
+                    </tr>
+                    <tr>
+                        <td class="td-label">Last Name</td>
+                        <td align="left"><input id="lastName" type="text" placeholder="e.g. Doe" maxlength="20"/></td>
+                    </tr>
+                    <tr>
+                        <td />
+                    </tr>
+                    <tr>
+                        <td class="td-label">Function</td>
+                        <td align="left">
+                            <select id="function" style="width: 100%">
+                                <option value="" selected></option>
+                                <option value="Engineer">Engineer</option>
+                                <option value="Architect">Architect</option>
+                                <option value="Administrator">Administrator</option>
+                                <option value="Consultant">Consultant</option>
+                                <option value="CFO">CFO</option>
+                                <option value="CTO">CTO</option>
+                                <option value="CEO">CEO</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td />
+                    </tr>
+                    <tr>
+                        <td class="td-label">Available</td>
+                        <td>
+                            Yes
+                            <input type="radio" id="availableYes" name="available" value="yes" />
+                            &nbsp;No
+                            <input type="radio" id="availableNo" name="available" value="no" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td />
+                    </tr>
+                    <tr>
+                        <td class="td-label">Contractor</td>
+                        <td><input id="contractor" type="checkbox" value="true"/></td>
+                    </tr>
+                    <tr> <td/> </tr>
+                    <tr>
+                        <td class="td-label">Workload</td>
+                        <td align="left"><input type="range" min="0" max="100" id="workLoad" style="width: 100%"/></td>
+                    </tr>
+                    <tr> <td/> </tr>
+                    <tr> <td/> </tr>
+                    <tr>
+                        <td>
+                            <button id="save-button" disabled="true">Save</button>
+                            <button id="reset-button" disabled="true">Reset</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+<script>
+
+        const firstName = document.getElementById("firstName");
+        const lastName = document.getElementById("lastName");
+        const functionName = document.getElementById("function");
+        const availableYes = document.getElementById("availableYes");
+        const availableNo = document.getElementById("availableNo");
+        const isContractor = document.getElementById("contractor");
+        const workload = document.getElementById("workLoad");
+        const resetButton = document.getElementById("reset-button");
+        const saveTeamMemberBtn = document.getElementById("save-button");
+        const addTeamMemberBtn = document.getElementById("add-teammember");
+        const teamMemberForm = document.getElementById("teammember-form");
+        const table = document.getElementById("team-records");
+
+
+
+</script>
+
+
+</body>
