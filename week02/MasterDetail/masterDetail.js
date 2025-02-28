@@ -41,22 +41,30 @@ const MasterDetailController = () => {
     };
 
     const masterModel = ObservableList([]);
-
+    let selectedEntry = null;
 
     const addTeamMember = () => {
         const newEntry = Entry();
         masterModel.add(newEntry);
-        console.log("new Entry called");
         return newEntry;
     };
 
+    const selectEntry = (entry) => {
+        selectedEntry = entry;
+        onEntrySelectListeners.forEach(listener => listener(entry));
+    };
+
+    const onEntrySelectListeners = [];
+    const onEntrySelect = (listener) => onEntrySelectListeners.push(listener);
 
     return {
-        numberOfTodos:      masterModel.count,
-        numberOfopenTasks:  () => masterModel.countIf( todo => ! todo.getDone() ),
-        addTeamMember:      addTeamMember,
-        onEntryAdd:          masterModel.onAdd,
-    }
+        numberOfTodos: masterModel.count,
+        numberOfopenTasks: () => masterModel.countIf(todo => !todo.getDone()),
+        addTeamMember: addTeamMember,
+        onEntryAdd: masterModel.onAdd,
+        selectEntry: selectEntry,
+        onEntrySelect: onEntrySelect,
+    };
 };
 
 
@@ -86,6 +94,10 @@ const MasterItemsView = (masterDetailController, tableElement) => {
         row.appendChild(availableCell);
         row.appendChild(contractorCell);
         row.appendChild(workloadCell);
+
+        row.onclick = () => {
+            masterDetailController.selectEntry(entry);
+        };
 
         tableElement.querySelector('tbody').appendChild(row);
 
