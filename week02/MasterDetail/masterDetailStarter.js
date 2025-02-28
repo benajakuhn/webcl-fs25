@@ -1,8 +1,14 @@
-// week02/MasterDetail/masterDetailStarter.js
-import { TeamMemberController } from './controller.js';
 
-const teamMemberController = new TeamMemberController();
+import { MasterDetailController, MasterItemsView, DetailView} from './masterDetail.js';
 
-document.getElementById('add-teammember').onclick = _ => teamMemberController.addTeamMember();
+const masterDetailController = MasterDetailController();
 
-teamMemberController.addTeamMember();
+// binding of the main view
+
+document.getElementById('add-teammember').onclick    = _ => masterDetailController.addTeamMember();
+
+MasterItemsView(masterDetailController, document.getElementById('list'));
+DetailView(masterDetailController, document.getElementById('teammember-form'));
+
+// init the model
+masterDetailController.addTeamMember();
