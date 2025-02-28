@@ -100,8 +100,34 @@ const MasterItemsView = (masterDetailController, tableElement) => {
     masterDetailController.onEntryAdd(render);
 };
 
-const DetailView = (todoController, numberOfTasksElement) => {
+const DetailView = (masterDetailController, formElement) => {
 
+    const firstNameInput = formElement.querySelector('#firstName');
+    const lastNameInput = formElement.querySelector('#lastName');
+    const functionSelect = formElement.querySelector('#function');
+    const availableYesRadio = formElement.querySelector('#availableYes');
+    const availableNoRadio = formElement.querySelector('#availableNo');
+    const contractorCheckbox = formElement.querySelector('#contractor');
+    const workloadRange = formElement.querySelector('#workLoad');
 
+    const render = entry => {
+        firstNameInput.value = entry.getFirstName();
+        lastNameInput.value = entry.getLastName();
+        functionSelect.value = entry.getFunction();
+        availableYesRadio.checked = entry.getAvailable();
+        availableNoRadio.checked = !entry.getAvailable();
+        contractorCheckbox.checked = entry.getContractor();
+        workloadRange.value = entry.getWorkload();
+
+        firstNameInput.oninput = () => entry.setFirstName(firstNameInput.value);
+        lastNameInput.oninput = () => entry.setLastName(lastNameInput.value);
+        functionSelect.onchange = () => entry.setFunction(functionSelect.value);
+        availableYesRadio.onchange = () => entry.setAvailable(true);
+        availableNoRadio.onchange = () => entry.setAvailable(false);
+        contractorCheckbox.onchange = () => entry.setContractor(contractorCheckbox.checked);
+        workloadRange.oninput = () => entry.setWorkload(workloadRange.value);
+    };
+
+    masterDetailController.onEntrySelect(render);
 };
 
