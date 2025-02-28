@@ -71,6 +71,7 @@ const MasterDetailController = () => {
 // View-specific parts
 
 const MasterItemsView = (masterDetailController, tableElement) => {
+    let selectedRow = null;
 
     const render = entry => {
         const row = document.createElement('tr');
@@ -96,6 +97,11 @@ const MasterItemsView = (masterDetailController, tableElement) => {
         row.appendChild(workloadCell);
 
         row.onclick = () => {
+            if (selectedRow) {
+                selectedRow.classList.remove('selected-row');
+            }
+            row.classList.add('selected-row');
+            selectedRow = row;
             masterDetailController.selectEntry(entry);
         };
 
