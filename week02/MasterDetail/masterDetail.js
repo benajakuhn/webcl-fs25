@@ -1,35 +1,55 @@
 import { ObservableList } from "../observable/observable.js";
 import { Attribute }      from "../presentationModel/presentationModel.js";
 
-export { MasterDetailController, MasterItemsView, DetailView}
+export { MasterDetailController, MasterItemsView, DetailView }
 
 const MasterDetailController = () => {
 
     const Entry = () => {
         const firstNameAttr = Attribute("John");
-        const lastNameAttr = Attribute("Doe");
-        const functionAttr = Attribute("Engineer");
+        const lastNameAttr  = Attribute("Doe");
+        const functionAttr  = Attribute("Engineer");
         const availableAttr = Attribute(false);
         const contractorAttr = Attribute(false);
-        const workloadAttr = Attribute(0);
+        const workloadAttr  = Attribute(0);
 
         const originalValues = {
             firstName: firstNameAttr.valueObs.getValue(),
-            lastName: lastNameAttr.valueObs.getValue(),
-            function: functionAttr.valueObs.getValue(),
+            lastName:  lastNameAttr.valueObs.getValue(),
+            function:  functionAttr.valueObs.getValue(),
             available: availableAttr.valueObs.getValue(),
             contractor: contractorAttr.valueObs.getValue(),
-            workload: workloadAttr.valueObs.getValue()
+            workload:  workloadAttr.valueObs.getValue()
         };
 
         const dirtyAttrs = {
             firstName: Attribute(false),
-            lastName: Attribute(false),
-            function: Attribute(false),
+            lastName:  Attribute(false),
+            function:  Attribute(false),
             available: Attribute(false),
             contractor: Attribute(false),
-            workload: Attribute(false)
+            workload:  Attribute(false)
         };
+
+        // Update dirty flags when values change
+        firstNameAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.firstName.valueObs.setValue(newVal !== originalValues.firstName);
+        });
+        lastNameAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.lastName.valueObs.setValue(newVal !== originalValues.lastName);
+        });
+        functionAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.function.valueObs.setValue(newVal !== originalValues.function);
+        });
+        availableAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.available.valueObs.setValue(newVal !== originalValues.available);
+        });
+        contractorAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.contractor.valueObs.setValue(newVal !== originalValues.contractor);
+        });
+        workloadAttr.valueObs.onChange(newVal => {
+            dirtyAttrs.workload.valueObs.setValue(Number(newVal) !== originalValues.workload);
+        });
 
         return {
             getFirstName: firstNameAttr.valueObs.getValue,
@@ -67,7 +87,17 @@ const MasterDetailController = () => {
                 availableAttr.valueObs.setValue(originalValues.available);
                 contractorAttr.valueObs.setValue(originalValues.contractor);
                 workloadAttr.valueObs.setValue(originalValues.workload);
+                Object.keys(dirtyAttrs).forEach(attr => dirtyAttrs[attr].valueObs.setValue(false));
+            },
 
+            save: () => {
+                // Commit current values as new originals
+                originalValues.firstName = firstNameAttr.valueObs.getValue();
+                originalValues.lastName  = lastNameAttr.valueObs.getValue();
+                originalValues.function  = functionAttr.valueObs.getValue();
+                originalValues.available = availableAttr.valueObs.getValue();
+                originalValues.contractor = contractorAttr.valueObs.getValue();
+                originalValues.workload  = workloadAttr.valueObs.getValue();
                 Object.keys(dirtyAttrs).forEach(attr => dirtyAttrs[attr].valueObs.setValue(false));
             }
         };
@@ -100,27 +130,33 @@ const MasterDetailController = () => {
     };
 };
 
-
-// View-specific parts
-
+// --- Master View ---
 const MasterItemsView = (masterDetailController, tableElement) => {
     let selectedRow = null;
 
     const render = entry => {
         const row = document.createElement('tr');
 
-        const createCell = (value) => {
+        const createCell = (value, attrName) => {
             const cell = document.createElement('td');
             cell.textContent = value;
+            // Update cell style when the underlying value is dirty
+            entry.onDirtyChanged(attrName, () => {
+                if (entry.isDirty(attrName)) {
+                    cell.classList.add('dirty');
+                } else {
+                    cell.classList.remove('dirty');
+                }
+            });
             return cell;
         };
 
-        const firstNameCell = createCell(entry.getFirstName());
-        const lastNameCell = createCell(entry.getLastName());
-        const functionCell = createCell(entry.getFunction());
-        const availableCell = createCell(entry.getAvailable() ? 'Yes' : 'No');
-        const contractorCell = createCell(entry.getContractor() ? 'Yes' : 'No');
-        const workloadCell = createCell(entry.getWorkload() + '%');
+        const firstNameCell = createCell(entry.getFirstName(), "firstName");
+        const lastNameCell  = createCell(entry.getLastName(), "lastName");
+        const functionCell  = createCell(entry.getFunction(), "function");
+        const availableCell = createCell(entry.getAvailable() ? 'Yes' : 'No', "available");
+        const contractorCell = createCell(entry.getContractor() ? 'Yes' : 'No', "contractor");
+        const workloadCell  = createCell(entry.getWorkload() + '%', "workload");
 
         row.appendChild(firstNameCell);
         row.appendChild(lastNameCell);
@@ -151,34 +187,101 @@ const MasterItemsView = (masterDetailController, tableElement) => {
     masterDetailController.onEntryAdd(render);
 };
 
+// --- Detail View ---
 const DetailView = (masterDetailController, formElement) => {
 
-    const firstNameInput = formElement.querySelector('#firstName');
-    const lastNameInput = formElement.querySelector('#lastName');
-    const functionSelect = formElement.querySelector('#function');
+    const firstNameInput  = formElement.querySelector('#firstName');
+    const lastNameInput   = formElement.querySelector('#lastName');
+    const functionSelect  = formElement.querySelector('#function');
     const availableYesRadio = formElement.querySelector('#availableYes');
-    const availableNoRadio = formElement.querySelector('#availableNo');
+    const availableNoRadio  = formElement.querySelector('#availableNo');
     const contractorCheckbox = formElement.querySelector('#contractor');
-    const workloadRange = formElement.querySelector('#workLoad');
+    const workloadRange   = formElement.querySelector('#workLoad');
+    const saveButton      = formElement.querySelector('#save-button');
+    const resetButton     = formElement.querySelector('#reset-button');
+
+    let currentEntry = null;
+
+    const updateDirtyState = () => {
+        if (!currentEntry) return;
+        const isDirty = currentEntry.isDirty("firstName") ||
+            currentEntry.isDirty("lastName") ||
+            currentEntry.isDirty("function") ||
+            currentEntry.isDirty("available") ||
+            currentEntry.isDirty("contractor") ||
+            currentEntry.isDirty("workload");
+        saveButton.disabled = !isDirty;
+        resetButton.disabled = !isDirty;
+    };
+
+    const markFieldDirty = (inputElement, attrName) => {
+        currentEntry.onDirtyChanged(attrName, () => {
+            if (currentEntry.isDirty(attrName)) {
+                inputElement.classList.add('dirty');
+            } else {
+                inputElement.classList.remove('dirty');
+            }
+            updateDirtyState();
+        });
+    };
 
     const render = entry => {
-        firstNameInput.value = entry.getFirstName();
-        lastNameInput.value = entry.getLastName();
-        functionSelect.value = entry.getFunction();
-        availableYesRadio.checked = entry.getAvailable();
-        availableNoRadio.checked = !entry.getAvailable();
-        contractorCheckbox.checked = entry.getContractor();
-        workloadRange.value = entry.getWorkload();
+        currentEntry = entry;
+        formElement.classList.remove('unselected');
 
+        // Populate form fields from the selected entry
+        firstNameInput.value  = entry.getFirstName();
+        lastNameInput.value   = entry.getLastName();
+        functionSelect.value  = entry.getFunction();
+        availableYesRadio.checked = entry.getAvailable();
+        availableNoRadio.checked  = !entry.getAvailable();
+        contractorCheckbox.checked = entry.getContractor();
+        workloadRange.value   = entry.getWorkload();
+
+        // Wire up changes to update the model
         firstNameInput.oninput = () => entry.setFirstName(firstNameInput.value);
-        lastNameInput.oninput = () => entry.setLastName(lastNameInput.value);
+        lastNameInput.oninput  = () => entry.setLastName(lastNameInput.value);
         functionSelect.onchange = () => entry.setFunction(functionSelect.value);
         availableYesRadio.onchange = () => entry.setAvailable(true);
-        availableNoRadio.onchange = () => entry.setAvailable(false);
+        availableNoRadio.onchange  = () => entry.setAvailable(false);
         contractorCheckbox.onchange = () => entry.setContractor(contractorCheckbox.checked);
-        workloadRange.oninput = () => entry.setWorkload(workloadRange.value);
+        workloadRange.oninput  = () => entry.setWorkload(workloadRange.value);
+
+        // Mark each field when dirty
+        markFieldDirty(firstNameInput, "firstName");
+        markFieldDirty(lastNameInput, "lastName");
+        markFieldDirty(functionSelect, "function");
+        markFieldDirty(availableYesRadio, "available"); // use one of the radio buttons
+        markFieldDirty(contractorCheckbox, "contractor");
+        markFieldDirty(workloadRange, "workload");
+
+        updateDirtyState();
+
+        // Save and Reset handlers
+        saveButton.onclick = () => {
+            entry.save();
+            firstNameInput.value  = entry.getFirstName();
+            lastNameInput.value   = entry.getLastName();
+            functionSelect.value  = entry.getFunction();
+            availableYesRadio.checked = entry.getAvailable();
+            availableNoRadio.checked  = !entry.getAvailable();
+            contractorCheckbox.checked = entry.getContractor();
+            workloadRange.value   = entry.getWorkload();
+            updateDirtyState();
+        };
+
+        resetButton.onclick = () => {
+            entry.reset();
+            firstNameInput.value  = entry.getFirstName();
+            lastNameInput.value   = entry.getLastName();
+            functionSelect.value  = entry.getFunction();
+            availableYesRadio.checked = entry.getAvailable();
+            availableNoRadio.checked  = !entry.getAvailable();
+            contractorCheckbox.checked = entry.getContractor();
+            workloadRange.value   = entry.getWorkload();
+            updateDirtyState();
+        };
     };
 
     masterDetailController.onEntrySelect(render);
 };
-
