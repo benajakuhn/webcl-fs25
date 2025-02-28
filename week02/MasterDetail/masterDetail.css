@@ -14,3 +14,12 @@
     transform: scale(1.02);
     transition: transform 0.2s, box-shadow 0.2s;
 }
+/* Highlight dirty cells and inputs */
+.dirty {
+    background-color: #ffcccc;
+}
+
+/* Optionally, add a red border for dirty form fields */
+input.dirty, select.dirty, input[type="range"].dirty {
+    border: 2px solid red;
+}

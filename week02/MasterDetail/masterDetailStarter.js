@@ -1,14 +1,13 @@
-
-import { MasterDetailController, MasterItemsView, DetailView} from './masterDetail.js';
+import { MasterDetailController, MasterItemsView, DetailView } from './masterDetail.js';
 
 const masterDetailController = MasterDetailController();
 
-// binding of the main view
+// Bind the add button
+document.getElementById('add-teammember').onclick = () => masterDetailController.addTeamMember();
 
-document.getElementById('add-teammember').onclick    = _ => masterDetailController.addTeamMember();
-
+// Initialize views
 MasterItemsView(masterDetailController, document.getElementById('list'));
 DetailView(masterDetailController, document.getElementById('teammember-form'));
 
-// init the model
+// Start with one entry
 masterDetailController.addTeamMember();

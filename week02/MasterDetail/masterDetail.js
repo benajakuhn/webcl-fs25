@@ -13,6 +13,24 @@ const MasterDetailController = () => {
         const contractorAttr = Attribute(false);
         const workloadAttr = Attribute(0);
 
+        const originalValues = {
+            firstName: firstNameAttr.valueObs.getValue(),
+            lastName: lastNameAttr.valueObs.getValue(),
+            function: functionAttr.valueObs.getValue(),
+            available: availableAttr.valueObs.getValue(),
+            contractor: contractorAttr.valueObs.getValue(),
+            workload: workloadAttr.valueObs.getValue()
+        };
+
+        const dirtyAttrs = {
+            firstName: Attribute(false),
+            lastName: Attribute(false),
+            function: Attribute(false),
+            available: Attribute(false),
+            contractor: Attribute(false),
+            workload: Attribute(false)
+        };
+
         return {
             getFirstName: firstNameAttr.valueObs.getValue,
             setFirstName: firstNameAttr.valueObs.setValue,
@@ -37,6 +55,21 @@ const MasterDetailController = () => {
             getWorkload: workloadAttr.valueObs.getValue,
             setWorkload: workloadAttr.valueObs.setValue,
             onWorkloadChanged: workloadAttr.valueObs.onChange,
+
+            isDirty: (attr) => dirtyAttrs[attr].valueObs.getValue(),
+            setDirty: (attr, value) => dirtyAttrs[attr].valueObs.setValue(value),
+            onDirtyChanged: (attr, callback) => dirtyAttrs[attr].valueObs.onChange(callback),
+
+            reset: () => {
+                firstNameAttr.valueObs.setValue(originalValues.firstName);
+                lastNameAttr.valueObs.setValue(originalValues.lastName);
+                functionAttr.valueObs.setValue(originalValues.function);
+                availableAttr.valueObs.setValue(originalValues.available);
+                contractorAttr.valueObs.setValue(originalValues.contractor);
+                workloadAttr.valueObs.setValue(originalValues.workload);
+
+                Object.keys(dirtyAttrs).forEach(attr => dirtyAttrs[attr].valueObs.setValue(false));
+            }
         };
     };
 
