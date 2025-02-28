@@ -6,9 +6,9 @@ export { MasterDetailController, MasterItemsView, DetailView}
 const MasterDetailController = () => {
 
     const Entry = () => {
-        const firstNameAttr = Attribute("firstName");
-        const lastNameAttr = Attribute("lastName");
-        const functionAttr = Attribute("function");
+        const firstNameAttr = Attribute("John");
+        const lastNameAttr = Attribute("Doe");
+        const functionAttr = Attribute("Engineer");
         const availableAttr = Attribute(false);
         const contractorAttr = Attribute(false);
         const workloadAttr = Attribute(0);
