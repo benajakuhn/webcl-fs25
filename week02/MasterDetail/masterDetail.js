@@ -91,6 +91,7 @@ const MasterDetailController = () => {
     const deleteTeamMember = (entry) => {
         if (selectedEntry === entry) {
             selectedEntry = null;
+            onEntrySelectListeners.forEach(listener => listener(null));
         }
         masterModel.del(entry);
     };
@@ -148,7 +149,6 @@ const MasterItemsView = (masterDetailController, tableElement) => {
         row.appendChild(contractorCell);
         row.appendChild(workloadCell);
 
-        // NEW: Create a delete cell with a button
         const deleteCell = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = "Delete";
@@ -214,9 +214,50 @@ const DetailView = (masterDetailController, formElement) => {
         });
     };
 
-    const render = entry => {
-        currentEntry = entry;
+    // Function to deactivate the form when no entry is selected
+    const deactivateForm = () => {
+        formElement.classList.add('unselected');
+        // Clear values
+        firstNameInput.value = '';
+        lastNameInput.value = '';
+        functionSelect.value = '';
+        availableYesRadio.checked = false;
+        availableNoRadio.checked = false;
+        contractorCheckbox.checked = false;
+        workloadRange.value = 0;
+
+        // Disable inputs so they cannot be changed
+        firstNameInput.disabled = true;
+        lastNameInput.disabled = true;
+        functionSelect.disabled = true;
+        availableYesRadio.disabled = true;
+        availableNoRadio.disabled = true;
+        contractorCheckbox.disabled = true;
+        workloadRange.disabled = true;
+        saveButton.disabled = true;
+        resetButton.disabled = true;
+    };
+
+    // Function to activate the form when an entry is selected
+    const activateForm = () => {
         formElement.classList.remove('unselected');
+        firstNameInput.disabled = false;
+        lastNameInput.disabled = false;
+        functionSelect.disabled = false;
+        availableYesRadio.disabled = false;
+        availableNoRadio.disabled = false;
+        contractorCheckbox.disabled = false;
+        workloadRange.disabled = false;
+    };
+
+    const render = entry => {
+        if (!entry) {
+            currentEntry = null;
+            deactivateForm();
+            return;
+        }
+        currentEntry = entry;
+        activateForm();
 
         // Populate form fields from the entry
         firstNameInput.value = entry.getFirstName();
@@ -272,6 +313,9 @@ const DetailView = (masterDetailController, formElement) => {
             updateDirtyState();
         };
     };
+
+    // Initially deactivate the form (since no entry is selected)
+    deactivateForm();
 
     masterDetailController.onEntrySelect(render);
 };
