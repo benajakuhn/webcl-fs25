@@ -88,6 +88,13 @@ const MasterDetailController = () => {
         return newEntry;
     };
 
+    const deleteTeamMember = (entry) => {
+        if (selectedEntry === entry) {
+            selectedEntry = null;
+        }
+        masterModel.del(entry);
+    };
+
     const selectEntry = entry => {
         selectedEntry = entry;
         onEntrySelectListeners.forEach(listener => listener(entry));
@@ -100,9 +107,11 @@ const MasterDetailController = () => {
         addTeamMember,
         onEntryAdd: masterModel.onAdd,
         selectEntry,
-        onEntrySelect
+        onEntrySelect,
+        deleteTeamMember   // expose the delete function
     };
 };
+
 
 // --- Master View ---
 const MasterItemsView = (masterDetailController, tableElement) => {
@@ -138,6 +147,18 @@ const MasterItemsView = (masterDetailController, tableElement) => {
         row.appendChild(availableCell);
         row.appendChild(contractorCell);
         row.appendChild(workloadCell);
+
+        // NEW: Create a delete cell with a button
+        const deleteCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = (e) => {
+            e.stopPropagation(); // Prevent row selection when clicking delete
+            masterDetailController.deleteTeamMember(entry);
+            row.remove();
+        };
+        deleteCell.appendChild(deleteButton);
+        row.appendChild(deleteCell);
 
         row.onclick = () => {
             if (selectedRow) {
