@@ -1,5 +1,3 @@
-/* masterDetail.css */
-
 * {
     margin: 0;
     padding: 0;
@@ -14,12 +12,24 @@ body {
     padding: 20px;
 }
 
-/* Container styling: untereinander gestapelt */
+/* Container: Standard vertikale Anordnung */
 .container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
+}
+
+/* Bei grösseren Bildschirmen (ab 1024px) werden die Bereiche nebeneinander angezeigt */
+@media (min-width: 1024px) {
+    .container {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+    .table-container, .form-container {
+        width: 48%;
+    }
 }
 
 /* Table- und Form-Container: Volle Breite, mit Maximalbreite zur Lesbarkeit */
@@ -31,6 +41,14 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabellencontainer scrollbar machen, falls nötig */
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+    display: block;
 }
 
 /* Button im Table-Container */
@@ -54,11 +72,6 @@ body {
 }
 
 /* Tabellenstile */
-.table-container table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
 .table-container th,
 .table-container td {
     text-align: left;
@@ -71,7 +84,7 @@ body {
     font-weight: 600;
 }
 
-/* Formularelemente */
+/* Detailformular */
 .detail-form {
     width: 100%;
 }
@@ -137,30 +150,4 @@ button:hover:not(:disabled) {
 /* Markierung "dirty" Felder */
 .dirty {
     background-color: #ffe6e6;
-}
-
-input.dirty, select.dirty, input[type="range"].dirty {
-    border: 2px solid #ff4d4d;
-}
-
-/* Zusätzliche Responsive Anpassungen */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-
-    .table-container,
-    .form-container {
-        padding: 15px;
-    }
-
-    .table-container th,
-    .table-container td {
-        padding: 8px 10px;
-    }
-
-    button {
-        padding: 8px 16px;
-        margin: 3px;
-    }
 }
