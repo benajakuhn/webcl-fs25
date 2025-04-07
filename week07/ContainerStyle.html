@@ -7,7 +7,10 @@
         @container style(--my-var:2) {
             /*color: blue; syntax error at a container */
             div {
-                color: red;
+                color:      red;
+                position:   relative;
+                left:       5cqb;
+                top:        1cqb;
                 transform: rotate( calc( var(--my-var) * 1deg));  /* trick of the day */
             }
 
