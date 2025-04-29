@@ -15,46 +15,31 @@
         }
 
         dialog {
-            max-width: 10em;
-            border-width: .5px;
-            box-shadow: .5em .5em .5em .2em black;
-            /*border-radius: .2em;*/
-            /*border-top-left-radius:     50% 30%;*/
-            /*border-top-right-radius:    30% 50% ;*/
-            /*border-bottom-right-radius: 50% 30%;*/
-            /*border-bottom-left-radius:  30% 50%;*/
-            /*border-radius: 50% 30% 50% 30% /*/
-            /*               30% 50% 30% 50%;*/
+            position:       fixed;
+            top:            20vh;
+            border-width:   .1em;
+            box-shadow:     .5em .5em .5em .2em black;
+            border-radius:  .5em;
 
-
-            opacity: 0;
-            transform: scaleY(0) rotate(0);
-
-            transition:
-              opacity   2.7s ease-out,
-              transform 0.7s ease-out;
-              /*overlay 0.7s ease-out allow-discrete,*/
-              /*display 0.7s ease-out allow-discrete;*/
+            transform-origin:   center top;
+            transition:         transform 200ms;
 
         }
         dialog[open] {
-          opacity: 1;
-          transform: scaleY(1) rotate(360deg);
+            transform: scaleY(1);
         }
         dialog::backdrop {
-            inset: 50px;
-            background-color: #FF000010;
-            /*filter: blur(5px);*/
-            backdrop-filter: blur(1px);
+            inset:              0;
+            --clr-sec-bg:       black;
+            background-color:   color-mix( in srgb, var(--clr-sec-bg), transparent 80% );
+            backdrop-filter:    blur(1px);
         }
 
         @starting-style {
           dialog[open] {
-            opacity: 0;
-            transform: scaleY(0) rotate(0);
+            transform: scaleY(0) ;
           }
         }
-
 
     </style>
 </head>
