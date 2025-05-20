@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Production</title>
+</head>
+<body>
+
+<output id="out"></output>
+
+<pre>
+    <script type="module">
+
+        import {Service}        from "./productionService.js";
+        import {setService}     from "./serviceHolder.js";
+        import {code}           from "./code.js";
+
+        setService(Service("https://jsonplaceholder.typicode.com"));
+
+        code(1);
+
+    </script>
+</pre>
+</body>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Day 5 Test</title>
+    <style>
+        #out {
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+
+<output id="out"></output>
+<output id="testoutput"></output>
+
+<pre>
+    <script type="module">
+
+        import {Service}    from "./testService.js";
+        import {setService} from "./serviceHolder.js";
+        import {code}       from "./code.js";
+
+        const testData = /** @type { TestServiceOptionType } */ {
+            comment: {name: "loaded"}
+        };
+        setService(Service(testData));
+
+        const result = code(-1);
+        testoutput.textContent += " " + result.length > 0;
+
+        code(1)
+            .then(_ => out.textContent === "loaded")
+            .then(result => testoutput.textContent += " " + result);
+
+        testData.error = "fail";
+        let ignored    = true;
+        code(1)
+            .then(_ => ignored = false)
+            .catch(msg => {
+                testoutput.textContent += " " + (msg === "fail");
+                testoutput.textContent += " " + (testData.msg === "fail");
+                testoutput.textContent += " " + ignored;
+            });
+
+
+
+
+
+    </script>
+</pre>
+</body>
+
+</html>
